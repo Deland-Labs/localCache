@@ -1,0 +1,5 @@
+test/
+.parcel-cache/
+docs/
+.husky/
+.github/

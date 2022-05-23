@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "moduleResolution": "Node",
+    "esModuleInterop": true,
+    "lib": ["ES2021", "DOM"]
+  },
+  "typedocOptions": {
+    "name": "Local Cache",
+    "excludeExternals": true,
+    "excludePrivate": true,
+    "readme": "./ReadMe.md",
+    "out": "docs/"
+  }
+}
