@@ -1,5 +1,6 @@
 import { ILocalCache } from './ILocalCache';
 import { IndexedDBCache } from './Providers/IndexedDBProvider';
+import { LocalStorageCache } from './Providers/LocalStorageProvider';
 import { SessionStorageCache } from './Providers/SessionStorageProvider';
 
 enum CacheType {
@@ -29,8 +30,8 @@ class LocalCache implements ILocalCache {
 
         if (_indexedDB) this.cache = new IndexedDBCache(ttl);
         break;
-      case CacheType.SessionStorage:
-        if (sessionStorage) this.cache = new SessionStorageCache(ttl);
+      case CacheType.LocalStorage:
+        if (localStorage) this.cache = new LocalStorageCache(ttl);
         break;
       default:
         break;
