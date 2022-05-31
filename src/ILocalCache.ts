@@ -1,12 +1,12 @@
 export interface ILocalCache {
-  getCurrentBucket: () => string;
-  setCurrentBucket: (bucket: string) => Promise<void>;
-  set: (key: string, value: any, ttl?: number) => Promise<void>;
-  get: (key: string) => Promise<any>;
-  delete: (key: string) => Promise<void>;
-  flush: (expired: boolean) => Promise<void>;
-  flushBucket: (expired: boolean, bucket?: string) => Promise<void>;
-  buckets: () => Promise<Array<string>>;
+  getCurrentBucket(): string;
+  setCurrentBucket(bucket: string): Promise<void>;
+  set<T>(key: string, value: T, ttl?: number): Promise<void>;
+  get<T>(key: string): Promise<any>;
+  delete(key: string): Promise<void>;
+  flush(expired: boolean): Promise<void>;
+  flushBucket(expired: boolean, bucket?: string): Promise<void>;
+  buckets(): Promise<Array<string>>;
 }
 
 export const jsonStringify = (value: any) => {

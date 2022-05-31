@@ -18,10 +18,10 @@ export class SessionStorageCache implements ILocalCache {
     this._cacheExpiryTime = ttl || this._defaultCacheExpiryTime;
   }
 
-  public delete = async (key: string) => {
+  public async delete(key: string) {
     removeItem(this.generateKey(key));
-  };
-  public get(key) {
+  }
+  public get<T>(key) {
     key = this.generateKey(key);
 
     let item = getItem(key);
@@ -30,10 +30,10 @@ export class SessionStorageCache implements ILocalCache {
       return null;
     }
     let { value } = jsonParse(item);
-    return value;
+    return value as T;
   }
 
-  public set = async (key: string, value: any, ttl?: number) => {
+  public async set<T>(key: string, value: any, ttl?: number) {
     const expiryDateInMilliseconds = this.calculateExpiryDate(ttl);
     let valueToSet: any = { value: value, expiry: expiryDateInMilliseconds };
 
@@ -72,12 +72,12 @@ export class SessionStorageCache implements ILocalCache {
         console.log(`Couldn't add key: ${key} to cache, e: ${e}`);
       }
     }
-  };
-  public getCurrentBucket = () => {
+  }
+  public getCurrentBucket() {
     return this._currentBucket || this._defaultBucket;
-  };
+  }
 
-  public setCurrentBucket = async bucketName => {
+  public async setCurrentBucket(bucketName) {
     this.fetchBucketsFromLocalStorage();
     if (!this._buckets.includes(bucketName)) {
       let newBuckets = JSON.stringify([...this._buckets, bucketName]);
@@ -89,21 +89,21 @@ export class SessionStorageCache implements ILocalCache {
       }
     }
     this._currentBucket = bucketName;
-  };
+  }
 
-  public flush = async (expired = true) => {
+  public async flush(expired = true) {
     let cb = expired ? removeExpiredItem : removeItem;
     this.eachKey(key => cb(key));
-  };
+  }
 
-  public flushBucket = async (expired = true, bucket?: string) => {
+  public async flushBucket(expired = true, bucket?: string) {
     bucket = bucket ?? this._currentBucket;
     let cb = expired ? removeExpiredItem : removeItem;
     this.eachKeyInBucket(key => cb(key), bucket);
-  };
-  public buckets = async () => {
+  }
+  public async buckets() {
     return this._buckets;
-  };
+  }
 
   private each(regExp, callback) {
     for (const key in sessionStorage) {
@@ -113,22 +113,22 @@ export class SessionStorageCache implements ILocalCache {
     }
   }
 
-  private eachKeyInBucket = (callback, bucket) => {
+  private eachKeyInBucket(callback, bucket) {
     let regExp = new RegExp(
       `^${this._prefix}-${bucket ?? this._currentBucket}(.*)`
     );
     this.each(regExp, callback);
-  };
-  private eachKey = callback => {
+  }
+  private eachKey(callback) {
     let regExp = new RegExp(`^${this._prefix}-(.*)`);
     this.each(regExp, callback);
-  };
+  }
 
-  private generateKey = key => {
+  private generateKey(key: string) {
     return `${this._prefix}${
       this._currentBucket ? `-${this._currentBucket}` : ''
     }-${key}`;
-  };
+  }
 
   private fetchBucketsFromLocalStorage = () => {
     let buckets = localStorage.getItem(this.BUCKETS_DATA_KEY);
