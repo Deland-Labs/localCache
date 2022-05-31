@@ -18,12 +18,13 @@ export class IndexedDBCache implements ILocalCache {
   constructor(ttl?: number) {
     this._cacheExpiryTime = ttl || this._defaultCacheExpiryTime;
   }
-  public delete = (key: string) => {
+
+  public delete(key: string) {
     const storeName = this.generateStoreName(this._currentBucket);
     const cacheKey = this.generateKey(key);
     return removeItem(this._db, storeName, cacheKey);
-  };
-  public get = async key => {
+  }
+  public async get<T>(key) {
     const cacheKey = this.generateKey(key);
 
     try {
@@ -39,14 +40,14 @@ export class IndexedDBCache implements ILocalCache {
       }
 
       let { value } = jsonParse(item as string);
-      return value;
+      return value as T;
     } catch (e) {
       console.log('indexdb cache get failed', e);
-      return null;
+      return undefined;
     }
-  };
+  }
 
-  public set = async (key: string, value: any, ttl?: number) => {
+  public async set<T>(key: string, value: T, ttl?: number) {
     const expiryDateInMilliseconds = this.calculateExpiryDate(ttl);
     let valueToSet: any = { value: value, expiry: expiryDateInMilliseconds };
 
@@ -62,12 +63,12 @@ export class IndexedDBCache implements ILocalCache {
     } catch (e) {
       console.log('indexdb cache set failed', e);
     }
-  };
-  public getCurrentBucket = () => {
+  }
+  public getCurrentBucket() {
     return this._currentBucket || this._defaultBucket;
-  };
+  }
 
-  public setCurrentBucket = async bucketName => {
+  public async setCurrentBucket(bucketName: string) {
     try {
       this.fetchBucketsFromLocalStorage();
       const storeName = this.generateStoreName(bucketName);
@@ -86,9 +87,9 @@ export class IndexedDBCache implements ILocalCache {
     } catch (e) {
       console.log('setCurrentBucket failed', e);
     }
-  };
+  }
 
-  public flush = async (expired = true) => {
+  public async flush(expired = true) {
     return new Promise<void>((resolve, reject) => {
       for (
         let bucketIndex = 0;
@@ -119,9 +120,9 @@ export class IndexedDBCache implements ILocalCache {
         resolve();
       }
     });
-  };
+  }
 
-  public flushBucket = (expired = true, bucket?: string) => {
+  public flushBucket(expired = true, bucket?: string) {
     const bucketName = bucket ?? this._currentBucket;
 
     const storeName = this.generateStoreName(bucketName);
@@ -144,29 +145,29 @@ export class IndexedDBCache implements ILocalCache {
         reject(e);
       };
     });
-  };
-  public buckets = async () => {
+  }
+  public async buckets() {
     return this._buckets;
-  };
+  }
 
-  private generateKey = key => {
+  private generateKey(key: string) {
     return `${this._prefix}${
       this._currentBucket ? `-${this._currentBucket}` : ''
     }-${key}`;
-  };
+  }
 
-  private generateStoreName = bucket => {
+  private generateStoreName(bucket: string) {
     return `${this._prefix}_${bucket}`;
-  };
+  }
 
-  private fetchBucketsFromLocalStorage = () => {
+  private fetchBucketsFromLocalStorage() {
     let buckets = localStorage.getItem(this.BUCKETS_DATA_KEY);
     if (buckets) {
       this._buckets = jsonParse(buckets);
     } else {
       this._buckets = [];
     }
-  };
+  }
 
   private calculateExpiryDate(cacheExpiryTime?: number) {
     let expiry = cacheExpiryTime ?? this._cacheExpiryTime;
@@ -176,7 +177,7 @@ export class IndexedDBCache implements ILocalCache {
     return expiryDateInMilliseconds;
   }
 
-  private getCacheStorage = storeName => {
+  private getCacheStorage(storeName: string) {
     return new Promise(function (resolve, reject) {
       const _window: any = (typeof window !== 'undefined' && window) || null;
       const _indexedDB =
@@ -197,7 +198,7 @@ export class IndexedDBCache implements ILocalCache {
         resolve(req.result);
       };
     });
-  };
+  }
 }
 
 function setItem(db, bucket, key, value) {
