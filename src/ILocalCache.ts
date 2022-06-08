@@ -2,7 +2,7 @@ export interface ILocalCache {
   getCurrentBucket(): string;
   setCurrentBucket(bucket: string): Promise<void>;
   set<T>(key: string, value: T, ttl?: number): Promise<void>;
-  get<T>(key: string): Promise<any>;
+  get<T>(key: string): Promise<T>;
   delete(key: string): Promise<void>;
   flush(expired: boolean): Promise<void>;
   flushBucket(expired: boolean, bucket?: string): Promise<void>;
