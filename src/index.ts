@@ -47,9 +47,9 @@ class LocalCache implements ILocalCache {
   }
   getCurrentBucket = () => this._cache().getCurrentBucket();
   setCurrentBucket = (bucket: string) => this._cache().setCurrentBucket(bucket);
-  set = (key: string, value: any, ttl?: number) =>
+  set = <T>(key: string, value: any, ttl?: number) =>
     this._cache().set(key, value, ttl);
-  get = (key: string) => this._cache().get(key);
+  get = <T>(key: string) => this._cache().get<T>(key);
   delete = (key: string) => this._cache().delete(key);
   flush = (expired: boolean) => this._cache().flush(expired);
   flushBucket = (expired: boolean, bucket?: string | undefined) =>
@@ -67,14 +67,14 @@ const cache = new LocalCache();
 cache.setCurrentBucket(CACHE_BUCKET);
 //cache key generate rule : cacheKey = pageName + uniqueKeyInPage
 export const queryWithCache = async <T>(
-  query: () => Promise<T>,
+  query: <T>() => Promise<T>,
   cacheKey: string,
   ttl?: number
 ) => {
-  const cacheItem = await cache.get(cacheKey);
+  const cacheItem = await cache.get<T>(cacheKey);
   if (cacheItem) return cacheItem;
 
-  const item = await query();
+  const item = await query<T>();
   if (item) await cache.set(cacheKey, item, ttl);
   return item as T;
 };
