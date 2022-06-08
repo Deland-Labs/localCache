@@ -67,14 +67,14 @@ const cache = new LocalCache();
 cache.setCurrentBucket(CACHE_BUCKET);
 //cache key generate rule : cacheKey = pageName + uniqueKeyInPage
 export const queryWithCache = async <T>(
-  query: <T>() => Promise<T>,
+  query: () => Promise<T>,
   cacheKey: string,
   ttl?: number
 ) => {
   const cacheItem = await cache.get<T>(cacheKey);
   if (cacheItem) return cacheItem;
 
-  const item = await query<T>();
+  const item = await query();
   if (item) await cache.set(cacheKey, item, ttl);
   return item as T;
 };
