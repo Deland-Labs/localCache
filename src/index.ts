@@ -1,10 +1,10 @@
 import { ILocalCache } from './ILocalCache';
-import { IndexedDBCache } from './Providers/IndexedDBProvider';
+//import { IndexedDBCache } from './Providers/IndexedDBProvider';
 import { LocalStorageCache } from './Providers/LocalStorageProvider';
 import { SessionStorageCache } from './Providers/SessionStorageProvider';
 
 enum CacheType {
-  IndexedDB = 1,
+  //IndexedDB = 1,
   SessionStorage = 2,
   LocalStorage = 4
 }
@@ -19,16 +19,8 @@ class LocalCache implements ILocalCache {
   ) {
     switch (cacheType) {
       case undefined:
-      case CacheType.IndexedDB:
-        const _window: any = (typeof window !== 'undefined' && window) || null;
-        const _indexedDB =
-          indexedDB ||
-          (_window &&
-            (_window.indexedDB ||
-              _window.webkitIndexedDB ||
-              _window.mozIndexedDB));
-
-        if (_indexedDB) this.cache = new IndexedDBCache(ttl);
+      case CacheType.SessionStorage:       
+        if (sessionStorage) this.cache = new SessionStorageCache(ttl);
         break;
       case CacheType.LocalStorage:
         if (localStorage) this.cache = new LocalStorageCache(ttl);
