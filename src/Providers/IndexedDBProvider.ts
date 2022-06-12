@@ -43,7 +43,7 @@ export class IndexedDBCache implements ILocalCache {
       return value as T;
     } catch (e) {
       console.log('indexdb cache get failed', e);
-      return undefined;
+      throw e;
     }
   }
 
@@ -55,6 +55,7 @@ export class IndexedDBCache implements ILocalCache {
       valueToSet = jsonStringify(valueToSet);
     } catch (e) {
       console.log(`Couldn't convert value to JSON, e: ${e}`);
+      throw e;
     }
 
     const storeName = this.generateStoreName(this._currentBucket);
@@ -62,6 +63,7 @@ export class IndexedDBCache implements ILocalCache {
       await setItem(this._db, storeName, this.generateKey(key), valueToSet);
     } catch (e) {
       console.log('indexdb cache set failed', e);
+      throw e;
     }
   }
   public getCurrentBucket() {
@@ -86,6 +88,7 @@ export class IndexedDBCache implements ILocalCache {
       }
     } catch (e) {
       console.log('setCurrentBucket failed', e);
+      throw e;
     }
   }
 
