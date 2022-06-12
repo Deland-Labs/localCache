@@ -15,7 +15,6 @@ class LocalCache implements ILocalCache {
   constructor(
     ttl?: number,
     cacheType?: CacheType,
-    fallbackCacheType?: CacheType
   ) {
     switch (cacheType) {
       case undefined:
@@ -24,14 +23,6 @@ class LocalCache implements ILocalCache {
         break;
       case CacheType.LocalStorage:
         if (localStorage) this.cache = new LocalStorageCache(ttl);
-        break;
-      default:
-        break;
-    }
-    switch (fallbackCacheType) {
-      case undefined:
-      case CacheType.SessionStorage:
-        if (sessionStorage) this.fallbackCache = new SessionStorageCache(ttl);
         break;
       default:
         break;
