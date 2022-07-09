@@ -5,7 +5,7 @@
 ## Usage
 
 ```shell
-npm config set @deland-labs:registry https://www.myget.org/F/ic-feed/npm/
+npm config set @deland-labs:registry https://gitlab.com/api/v4/projects/37663507/packages/npm/
 npm install @deland-labs/local-cache
 ```
 
