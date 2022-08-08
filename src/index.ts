@@ -19,7 +19,7 @@ class LocalCache implements ILocalCache {
   ) {
     switch (cacheType) {
       case undefined:
-      case CacheType.SessionStorage:       
+      case CacheType.SessionStorage:
         if (sessionStorage) this.cache = new SessionStorageCache(ttl);
         break;
       case CacheType.LocalStorage:
@@ -64,10 +64,13 @@ export const queryWithCache = async <T>(
   ttl?: number
 ) => {
   const cacheItem = await cache.get<T>(cacheKey);
-  if (cacheItem) return cacheItem;
+  if (cacheItem) {
+    console.debug(`hit cache key ${cacheKey}`, cacheItem);
+    return cacheItem;
+  }
 
   const item = await query();
-  if (item) await cache.set(cacheKey, item, ttl);
+  await cache.set(cacheKey, item, ttl);
   return item as T;
 };
 
