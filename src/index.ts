@@ -64,7 +64,7 @@ export const queryWithCache = async <T>(
   ttl?: number
 ) => {
   const cacheItem = await cache.get<T>(cacheKey);
-  if (cacheItem) {
+  if (typeof cacheItem != undefined) {
     console.debug(`hit cache key ${cacheKey}`, cacheItem);
     return cacheItem;
   }
